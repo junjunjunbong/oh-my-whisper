@@ -2,6 +2,8 @@
 
 Windows용 Push-to-talk 음성 전사 오버레이 앱. 단축키를 누르고 있는 동안 마이크를 녹음하고, 커서 근처 오버레이 창에 실시간으로 전사 결과를 표시한다. 키를 떼면 최종 전사 후 텍스트를 편집하고 클립보드에 복사할 수 있다.
 
+> [English](#english) version below.
+
 ## 주요 기능
 
 - **Push-to-talk**: `Ctrl+Shift+Space` 누르고 있는 동안만 녹음
@@ -26,8 +28,9 @@ Windows용 Push-to-talk 음성 전사 오버레이 앱. 단축키를 누르고 �
 
 - Windows 10/11 (x64)
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) (C++ 데스크톱 개발 워크로드)
-- Whisper GGML 모델 파일
+- Whisper GGML 모델 파일 (아래 스크립트로 다운로드)
+
+> 네이티브 DLL은 리포에 포함되어 있어 별도 C++ 빌드가 필요 없습니다. 직접 빌드하려면 [Visual Studio 2022](https://visualstudio.microsoft.com/) C++ 워크로드가 필요합니다.
 
 ## 빌드 및 실행
 
@@ -38,32 +41,23 @@ git clone --recursive https://github.com/junjunjunbong/oh-my-whisper.git
 cd oh-my-whisper
 ```
 
-> `--recursive`로 whisper.cpp 서브모듈도 함께 클론한다.
-
 ### 2. 모델 다운로드
 
-`models/` 디렉토리에 GGML 모델을 다운로드한다.
-
 ```bash
-# base 모델 (다국어, 권장)
-curl -L -o models/ggml-base.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin
+scripts\download-model.bat
 ```
 
-> 정확도가 부족하면 `ggml-small.bin`을 사용할 수 있다 (추론 시간 증가).
+[Hugging Face](https://huggingface.co/ggerganov/whisper.cpp)에서 `ggml-base.bin` (~148MB, 다국어)을 `models/` 디렉토리에 다운로드한다.
 
-### 3. 네이티브 DLL 빌드
+> 정확도가 부족하면 `ggml-small.bin` (~466MB)으로 교체할 수 있다.
 
-```bash
-scripts\build-whisper.bat
-```
-
-Visual Studio 2022에 포함된 CMake를 자동 감지하여 `whisper.dll` + `whisper_bridge.dll`을 빌드하고 앱 출력 디렉토리에 복사한다.
-
-### 4. 앱 빌드 및 실행
+### 3. 실행
 
 ```bash
-dotnet run --project app/OhMyWhisper.csproj
+run.bat
 ```
+
+끝. 재부팅 후에도 `run.bat` 더블클릭이면 바로 실행된다.
 
 ## 사용법
 
@@ -83,7 +77,9 @@ dotnet run --project app/OhMyWhisper.csproj
 
 ```
 oh-my-whisper/
+├── run.bat                        # 앱 실행 (더블클릭)
 ├── app/                           # .NET 8 WPF 앱
+│   ├── native/                    # 빌드 완료된 네이티브 DLL
 │   ├── Hotkey/                    # 전역 키보드 훅 (Ctrl+Shift+Space)
 │   ├── Audio/                     # WASAPI 캡처, 리샘플링, 링버퍼
 │   ├── Transcription/             # 브릿지 DLL P/Invoke, 추론 서비스
@@ -91,9 +87,10 @@ oh-my-whisper/
 │   └── StateMachine/              # 상태 enum (Idle/Recording/Finalizing/Editing)
 ├── third_party/
 │   ├── whisper.cpp/               # git submodule (whisper.cpp)
-│   └── whisper_bridge/            # C 브릿지 DLL (간단한 API만 노출)
+│   └── whisper_bridge/            # C 브릿지 DLL 소스
 ├── scripts/
-│   └── build-whisper.bat          # 네이티브 DLL 빌드 스크립트
+│   ├── download-model.bat         # 모델 다운로드
+│   └── build-whisper.bat          # 네이티브 DLL 재빌드 (선택)
 ├── models/                        # GGML 모델 파일 (gitignored)
 └── plan.md                        # 설계 문서
 ```
@@ -105,5 +102,92 @@ Idle ──(Ctrl+Shift+Space Down)──▶ Recording ──(Up)──▶ Finali
 ```
 
 ## 라이선스
+
+MIT
+
+---
+
+<a id="english"></a>
+
+# Oh My Whisper (English)
+
+A Windows push-to-talk speech-to-text overlay app. Hold the hotkey to record from your microphone, and a small overlay window near the cursor shows live transcription. Release the key to finalize, edit the text, and copy it to the clipboard.
+
+## Features
+
+- **Push-to-talk**: Records only while `Ctrl+Shift+Space` is held
+- **Live partial transcription**: Overlay text updates every ~1.5s during recording
+- **Cursor-relative overlay**: Always-on-top, DPI-aware, clamped to screen bounds
+- **Edit mode**: Release key → final transcription → edit text → Copy to clipboard
+- **System tray**: Toggle Korean/English, enable/disable hotkey, quit
+- **CPU-only**: Powered by whisper.cpp, no GPU required
+
+## Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| App framework | .NET 8 WPF |
+| Global key hook | `WH_KEYBOARD_LL` (P/Invoke) |
+| Audio capture | WASAPI (NAudio) |
+| Transcription engine | whisper.cpp (git submodule) |
+| Engine binding | C bridge DLL → C# P/Invoke |
+| System tray | Hardcodet.NotifyIcon.Wpf |
+
+## Prerequisites
+
+- Windows 10/11 (x64)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- Whisper GGML model file (downloaded via script below)
+
+> Pre-built native DLLs are included in the repo. To rebuild them yourself, you need [Visual Studio 2022](https://visualstudio.microsoft.com/) with the C++ desktop workload.
+
+## Setup
+
+### 1. Clone
+
+```bash
+git clone --recursive https://github.com/junjunjunbong/oh-my-whisper.git
+cd oh-my-whisper
+```
+
+### 2. Download model
+
+```bash
+scripts\download-model.bat
+```
+
+Downloads `ggml-base.bin` (~148MB, multilingual) from [Hugging Face](https://huggingface.co/ggerganov/whisper.cpp) into `models/`.
+
+> For better accuracy, replace with `ggml-small.bin` (~466MB) at the cost of slower inference.
+
+### 3. Run
+
+```bash
+run.bat
+```
+
+That's it. After reboot, just double-click `run.bat` again.
+
+## Usage
+
+1. Launch app → sits in system tray
+2. Hold **`Ctrl+Shift+Space`** → overlay appears near cursor + recording starts
+3. Partial transcription updates every ~1.5s while speaking
+4. Release key → final transcription → edit mode (text is editable)
+5. **Copy** button → clipboard / **Esc** → dismiss overlay
+
+### Tray Menu (right-click)
+
+- **Enable/Disable Hotkey** — toggle hotkey
+- **한국어 / English** — switch transcription language
+- **Quit** — exit app
+
+## State Machine
+
+```
+Idle ──(Ctrl+Shift+Space Down)──▶ Recording ──(Up)──▶ Finalizing ──▶ Editing ──(Esc/Copy)──▶ Idle
+```
+
+## License
 
 MIT
