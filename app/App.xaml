@@ -1,0 +1,29 @@
+<Application x:Class="OhMyWhisper.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:tb="http://www.hardcodet.net/taskbar"
+             xmlns:ui="clr-namespace:OhMyWhisper.UI"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <ui:TrayViewModel x:Key="TrayVM"/>
+
+        <tb:TaskbarIcon x:Key="TrayIcon"
+                        ToolTipText="OhMyWhisper"
+                        MenuActivation="RightClick">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Enable/Disable Hotkey"
+                              Command="{Binding ToggleHotkeyCommand, Source={StaticResource TrayVM}}"/>
+                    <Separator/>
+                    <MenuItem Header="한국어 (Korean)"
+                              Command="{Binding SetKoreanCommand, Source={StaticResource TrayVM}}"/>
+                    <MenuItem Header="English"
+                              Command="{Binding SetEnglishCommand, Source={StaticResource TrayVM}}"/>
+                    <Separator/>
+                    <MenuItem Header="Quit"
+                              Command="{Binding QuitCommand, Source={StaticResource TrayVM}}"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+    </Application.Resources>
+</Application>

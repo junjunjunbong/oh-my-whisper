@@ -1,0 +1,64 @@
+<Window x:Class="OhMyWhisper.UI.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="OhMyWhisper"
+        Width="420" Height="200"
+        WindowStyle="ToolWindow"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="CanResizeWithGrip"
+        Background="#FF1E1E2E"
+        KeyDown="Window_KeyDown">
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Status bar -->
+        <TextBlock x:Name="StatusText"
+                   Grid.Row="0"
+                   Text="Idle"
+                   Foreground="#FF89B4FA"
+                   FontSize="12"
+                   Margin="0,0,0,4"/>
+
+        <!-- Transcription text -->
+        <TextBox x:Name="TranscriptionBox"
+                 Grid.Row="1"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"
+                 Background="#FF313244"
+                 Foreground="#FFCDD6F4"
+                 BorderBrush="#FF585B70"
+                 BorderThickness="1"
+                 Padding="6"
+                 FontSize="14"
+                 IsReadOnly="True"/>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,6,0,0">
+            <Button x:Name="CopyButton"
+                    Content="Copy"
+                    Width="70" Height="28"
+                    Margin="0,0,6,0"
+                    Click="CopyButton_Click"
+                    Background="#FF89B4FA"
+                    Foreground="#FF1E1E2E"
+                    BorderThickness="0"
+                    FontWeight="SemiBold"/>
+            <Button x:Name="CloseButton"
+                    Content="✕"
+                    Width="28" Height="28"
+                    Click="CloseButton_Click"
+                    Background="#FF45475A"
+                    Foreground="#FFCDD6F4"
+                    BorderThickness="0"/>
+        </StackPanel>
+    </Grid>
+</Window>
