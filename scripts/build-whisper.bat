@@ -9,7 +9,7 @@ REM ====================================================
 set ROOT=%~dp0..
 set BRIDGE_DIR=%ROOT%\third_party\whisper_bridge
 set BUILD_DIR=%ROOT%\build\whisper_bridge
-set OUTPUT_DIR=%ROOT%\app\bin\Debug\net8.0-windows
+set OUTPUT_DIR=%ROOT%\app\native
 
 REM Visual Studio 2022 개발자 환경 설정
 if exist "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (

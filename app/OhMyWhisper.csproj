@@ -15,4 +15,12 @@
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
   </ItemGroup>
 
+  <!-- 네이티브 DLL: 빌드 시 자동으로 출력 디렉토리에 복사 -->
+  <ItemGroup>
+    <None Include="native\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>%(Filename)%(Extension)</Link>
+    </None>
+  </ItemGroup>
+
 </Project>
